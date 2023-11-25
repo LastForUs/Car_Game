@@ -26,8 +26,9 @@ class CarCommands:
         global cars_current_speed
         speed_change_multiplayer = speed_changes
         speed_change_multiplayer_bool = True
-        for i in range(1, speed_change_multiplayer + 1, 5):
-            print(f"Your Car {type_of_the_verb} By {speed_change_multiplayer}")
+        for i in range(0, speed_change_multiplayer + 1, 5):
+            print(f"Your Car {type_of_the_verb} By {i}")
+            wait(1.5)
             
 
 
