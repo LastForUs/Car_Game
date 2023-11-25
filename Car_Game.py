@@ -1,17 +1,35 @@
+from ast import While
 from queue import PriorityQueue
 import time
 import random
 car_can_start = True
 speed_changes = 0
 quitting = False
+car_commands_giver = ""
 max_speed = 0
 cars_current_speed = 0
 did_car_crashed = False
-Car_Game = True
-Car_Crashed = False
+wanna_play_again = ""
+car_game = True
+car_crashed = False
+type_of_the_verb = ""
+speed_change_multiplayer = 0
+speed_change_multiplayer_bool = bool
+def wait(time_waiting):
+    time.sleep(time_waiting)
 
 
 class CarCommands:
+    def time_pass_speed_change(self):
+        global speed_changes
+        global speed_change_multiplayer
+        global cars_current_speed
+        speed_change_multiplayer = speed_changes
+        speed_change_multiplayer_bool = True
+        for i in range(1, speed_change_multiplayer + 1, 5):
+            print(f"Your Car {type_of_the_verb} By {speed_change_multiplayer}")
+            
+
 
     def show_cars_max_speed(self):
         global max_speed
@@ -19,29 +37,40 @@ class CarCommands:
 
     def show_cars_current_speed(self):
         global cars_current_speed
-        print(cars_current_speed)
+        print(f"Your Cars Current Speed is:{cars_current_speed}")
 
     def add_speed_to_car(self):
         global cars_current_speed
         global speed_changes
+        global type_of_the_verb
+        type_of_the_verb = "Speed Up"
         cars_current_speed = speed_changes + cars_current_speed
+        car_commands.time_pass_speed_change()
         print("Speed Added")
+        print(f"Your Cars Current Speed is:{cars_current_speed}")
         return cars_current_speed
 
 
     def slow_down_the_car(self):
         global cars_current_speed
         global speed_changes
+        global type_of_the_verb
+        type_of_the_verb = "Slowed Down"
         cars_current_speed = cars_current_speed - speed_changes
+        car_commands.time_pass_speed_change()
         print("Slowed Down")
+        print(f"Your Cars Current Speed is:{cars_current_speed}")
         return cars_current_speed
 
     def car_crashed(self):
-        global did_car_crashed
-        did_car_crashed = True
-        global Car_Crashed
-        Car_Crashed = True
-        car_commands.qutting_car()
+        print("You Crashed Your Car")
+        wait(0.5)
+        print("Do you want to play again")
+        global wanna_play_again
+        wanna_play_again= input(">>").lower()
+        return wanna_play_again
+
+
         # Crashes The Car
 
     def set_max_speed_car(self):
@@ -65,7 +94,7 @@ Quit - closes the game
         global car_can_start
         if car_can_start:
             print ("Car İs Starting")
-            time.sleep(1)
+            wait(1)
             print("Car Started")
             car_can_start = False
         elif not car_can_start:
@@ -77,19 +106,19 @@ Quit - closes the game
             print("Car is not started")
         elif not car_can_start and cars_current_speed == 0:
             print("Car İs Stopping")
-            time.sleep(1)
+            wait(1)
             print("Car Stoped")
             car_can_start = True
         else:
             print("Slow The Car Down to 0")
     
     def qutting_car(self):
-        global Car_Game
+        global car_game
         global quitting
-        global Car_Crashed
-        Car_Game = False
+        global car_crashed
+        car_game = False
         quitting = True
-        if Car_Crashed == True:
+        if car_crashed == True:
             print("You Crashed The Car")
         else:
             return ''
@@ -99,13 +128,35 @@ Quit - closes the game
 car_commands = CarCommands()
 car_commands.set_max_speed_car()
 print("Type 'Help' for commands")
-while Car_Game:
+while car_game:
     
     if cars_current_speed > max_speed:
-        car_commands.car_crashed()
-        break
+        while True:
+            car_commands.car_crashed()
+            if wanna_play_again == 'y':
+                print("Starting The Game Again...")
+                wait(0.5)
+                print("------------------------------------------------------------------------------------------")
+                wait(0.5)
+                car_commands = CarCommands()
+                car_commands.set_max_speed_car()
+                print("Type 'Help' for commands")
+                cars_current_speed = 0
+                car_game = True
+                car_can_start = True
+                quitting = False
+                break
+            elif wanna_play_again == 'n':
+                print("Stopping The Game...")
+                car_commands.qutting_car()
+                break
+            else:
+                print("I Don't understand that")
 
-    car_commands_giver = input(">>").lower()
+    if quitting == False:
+        car_commands_giver = input(">>").lower()
+    
+
     if car_commands_giver == 'start':
         car_commands.start_car()
         # Starts The Car
@@ -123,7 +174,7 @@ while Car_Game:
             print("Stop The Car")
         # Closes The Game
     elif car_commands_giver == "add" or car_commands_giver == "slow":
-        if not car_can_start:
+        if not car_can_start and not quitting:
             print ("How Much Speed You Want To Change")
             x = True
             while x:
@@ -143,9 +194,13 @@ while Car_Game:
     elif car_commands_giver == "current":
         if not car_can_start:
             car_commands.show_cars_current_speed()
+            # Shows Cars Current Speed
         else:
             print("Car is not started")
     elif car_commands_giver == "max":
         car_commands.show_cars_max_speed()
     else:
         print("I don't understand that")
+
+    
+
